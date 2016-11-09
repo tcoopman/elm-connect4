@@ -3,18 +3,20 @@ module Tests exposing (..)
 import Test exposing (..)
 import Expect
 import String
-import Connect4 exposing (add)
+import Connect4 exposing (update, Msg)
 
 
 all : Test
 all =
-    describe "A Test Suite"
-        [ test "Addition"
+    describe "all"
+        [ connect4
+        ]
+
+
+connect4 : Test
+connect4 =
+    describe "update"
+        [ test "update"
             <| \() ->
-                Expect.equal (3 + 7) 10
-        , test "String.left"
-            <| \() ->
-                Expect.equal "a" (String.left 1 "abcdefg")
-        , test "Test add"
-            <| \() -> Expect.equal 3 (add 1 2)
+                Expect.equal 1 (update Connect4.Increment 0)
         ]
