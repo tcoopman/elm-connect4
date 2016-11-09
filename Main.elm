@@ -1,8 +1,8 @@
 module Main exposing (..)
 
 import Html.App as App
-import Connect4 exposing (model, view, update)
+import Connect4 exposing (newGame, view, update)
 
 
 main =
-    App.beginnerProgram { model = model, view = view, update = update }
+    App.beginnerProgram { model = newGame, view = view, update = update }
