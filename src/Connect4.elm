@@ -114,7 +114,7 @@ drawDiscs dict =
                     -50 + (column * 100) |> toString
 
                 yValue =
-                    50 + (600 - row * 100) |> toString
+                    50 + (700 - row * 100) |> toString
             in
                 (circle [ cx xValue, cy yValue, r "40", fill (discToColor disc) ] []) :: result
     in
@@ -131,9 +131,9 @@ drawEmptyBoard (Board row col) =
             line [ x1 "0", y1 (toCoordinate y), x2 "700", y2 (toCoordinate y), stroke "black", strokeWidth "5" ] []
 
         createVertical x =
-            line [ x1 (toCoordinate x), y1 "0", x2 (toCoordinate x), y2 "600", stroke "black", strokeWidth "5" ] []
+            line [ x1 (toCoordinate x), y1 "100", x2 (toCoordinate x), y2 "700", stroke "black", strokeWidth "5" ] []
     in
-        (List.map createHorizontal [0..row] ++ List.map createVertical [0..col])
+        (List.map createHorizontal [1..row + 1] ++ List.map createVertical [0..col])
 
 
 drawColumnInserts : Game -> List (Svg Msg)
@@ -143,7 +143,7 @@ drawColumnInserts game =
             -50 + col * 100 |> toString
 
         drawInsert col =
-            circle [ cx (xValue col), cy "650", r "30", fill (discToColor game.currentColor), stroke "black", strokeWidth "5", onClick (InsertDisc (col)) ] []
+            circle [ cx (xValue col), cy "50", r "30", fill (discToColor game.currentColor), stroke "black", strokeWidth "5", onClick (InsertDisc (col)) ] []
     in
         case game.board of
             Board row col ->
