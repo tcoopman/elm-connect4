@@ -8,14 +8,19 @@ import Svg.Events exposing (onClick)
 import List
 
 
-type Player
-    = PlayerRed
-    | PlayerBlue
-
-
 type Disc
     = Red
     | Blue
+
+
+discToColor : Disc -> String
+discToColor disc =
+    case disc of
+        Red ->
+            "red"
+
+        Blue ->
+            "blue"
 
 
 type alias Row =
@@ -55,7 +60,7 @@ type Msg
 heightOfColumn : Dict Position Disc -> Column -> Int
 heightOfColumn gameState col =
     Dict.keys gameState
-        |> List.filter ((==) col << snd)
+        |> List.filter (snd >> (==) col)
         |> List.map fst
         |> List.maximum
         |> Maybe.withDefault 0
@@ -110,16 +115,8 @@ drawDiscs dict =
 
                 yValue =
                     50 + (600 - row * 100) |> toString
-
-                color =
-                    case disc of
-                        Red ->
-                            "red"
-
-                        Blue ->
-                            "blue"
             in
-                (circle [ cx xValue, cy yValue, r "40", fill color ] []) :: result
+                (circle [ cx xValue, cy yValue, r "40", fill (discToColor disc) ] []) :: result
     in
         Dict.foldl drawDisc [] dict
 
@@ -127,47 +124,28 @@ drawDiscs dict =
 drawEmptyBoard : Board -> List (Svg msg)
 drawEmptyBoard (Board row col) =
     let
+        toCoordinate val =
+            val * 100 |> toString
+
         createHorizontal y =
-            let
-                yValue =
-                    toString (y * 100)
-            in
-                line [ x1 "0", y1 yValue, x2 "700", y2 yValue, stroke "black", strokeWidth "5" ] []
+            line [ x1 "0", y1 (toCoordinate y), x2 "700", y2 (toCoordinate y), stroke "black", strokeWidth "5" ] []
 
         createVertical x =
-            let
-                xValue =
-                    toString (x * 100)
-            in
-                line [ x1 xValue, y1 "0", x2 xValue, y2 "600", stroke "black", strokeWidth "5" ] []
-
-        horizontal =
-            List.map createHorizontal [0..row]
-
-        vertical =
-            List.map createVertical [0..col]
+            line [ x1 (toCoordinate x), y1 "0", x2 (toCoordinate x), y2 "600", stroke "black", strokeWidth "5" ] []
     in
-        horizontal ++ vertical
+        (List.map createHorizontal [0..row] ++ List.map createVertical [0..col])
 
 
 drawColumnInserts : Game -> List (Svg Msg)
 drawColumnInserts game =
     let
-        color =
-            case game.currentColor of
-                Red ->
-                    "red"
-
-                Blue ->
-                    "blue"
-
         xValue col =
             -50 + col * 100 |> toString
 
         drawInsert col =
-            circle [ cx (xValue col), cy "650", r "30", fill color, stroke "black", strokeWidth "5", onClick (InsertDisc (col)) ] []
+            circle [ cx (xValue col), cy "650", r "30", fill (discToColor game.currentColor), stroke "black", strokeWidth "5", onClick (InsertDisc (col)) ] []
     in
         case game.board of
             Board row col ->
-                List.filter (\c -> heightOfColumn game.gameState c < row) (Debug.log "a" [1..col])
-                    |>{ List.map drawInsert
+                List.filter (\c -> heightOfColumn game.gameState c < row) [1..col]
+                    |> List.map drawInsert
