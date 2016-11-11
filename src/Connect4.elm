@@ -39,10 +39,14 @@ type alias Position =
     ( Row, Column )
 
 
+type alias GameState =
+    Dict Position Disc
+
+
 type alias Game =
     { currentColor : Disc
     , board : Board
-    , gameState : Dict Position Disc
+    , gameState : GameState
     }
 
 
@@ -57,7 +61,7 @@ type Msg
     = InsertDisc Column
 
 
-heightOfColumn : Dict Position Disc -> Column -> Int
+heightOfColumn : GameState -> Column -> Int
 heightOfColumn gameState col =
     Dict.keys gameState
         |> List.filter (snd >> (==) col)
@@ -105,7 +109,7 @@ view model =
         ]
 
 
-drawDiscs : Dict Position Disc -> List (Svg msg)
+drawDiscs : GameState -> List (Svg msg)
 drawDiscs dict =
     let
         drawDisc ( row, column ) disc result =
