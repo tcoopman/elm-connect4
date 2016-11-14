@@ -16,7 +16,7 @@ all =
 connect4 : Test
 connect4 =
     describe "update"
-        [ test "update"
-            <| \() ->
+        [ test "update" <|
+            \() ->
                 Expect.equal 1 (update Connect4.Increment 0)
         ]

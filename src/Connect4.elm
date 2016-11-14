@@ -64,8 +64,8 @@ type Msg
 heightOfColumn : GameState -> Column -> Int
 heightOfColumn gameState col =
     Dict.keys gameState
-        |> List.filter (snd >> (==) col)
-        |> List.map fst
+        |> List.filter (Tuple.second >> (==) col)
+        |> List.map Tuple.first
         |> List.maximum
         |> Maybe.withDefault 0
 
@@ -105,7 +105,6 @@ view model =
                 ++ drawEmptyBoard model.board
                 ++ drawColumnInserts model
             )
-        , div [] [ text (toString model) ]
         ]
 
 
@@ -137,7 +136,7 @@ drawEmptyBoard (Board row col) =
         createVertical x =
             line [ x1 (toCoordinate x), y1 "100", x2 (toCoordinate x), y2 "700", stroke "black", strokeWidth "5" ] []
     in
-        (List.map createHorizontal [1..row + 1] ++ List.map createVertical [0..col])
+        (List.map createHorizontal (List.range 1 (row + 1)) ++ List.map createVertical (List.range 0 col))
 
 
 drawColumnInserts : Game -> List (Svg Msg)
@@ -151,5 +150,5 @@ drawColumnInserts game =
     in
         case game.board of
             Board row col ->
-                List.filter (\c -> heightOfColumn game.gameState c < row) [1..col]
+                List.filter (\c -> heightOfColumn game.gameState c < row) (List.range 1 col)
                     |> List.map drawInsert
